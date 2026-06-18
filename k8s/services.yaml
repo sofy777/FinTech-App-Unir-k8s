@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+  namespace: fintech
+  labels:
+    app: fintech-backend
+spec:
+  type: ClusterIP
+  selector:
+    app: fintech-backend
+  ports:
+    - port: 3001
+      targetPort: 3001
+      name: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+  namespace: fintech
+  labels:
+    app: fintech-frontend
+spec:
+  type: LoadBalancer
+  selector:
+    app: fintech-frontend
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+      name: http
+---
+# Servicios de Kubernetes para exponer frontend y backend dentro del cluster.
+# frontend-service usa LoadBalancer para obtener una IP pública en entornos que lo soporten.
