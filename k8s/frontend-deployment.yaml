@@ -17,8 +17,8 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: sof777/unir:frontend-v2
-          imagePullPolicy: IfNotPresent
+          image: sof777/unir:frontend-v3
+          imagePullPolicy: Always
           ports:
             - containerPort: 80
               name: http
