@@ -5,20 +5,28 @@ const { Pool } = require('pg');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// M
-app.use(cors());
+// ✅ CORS CONFIGURADO CORRECTAMENTE
+app.use(cors({
+  origin: '*', // en producción puedes poner tu frontend ELB
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type']
+}));
+
+// ✅ IMPORTANTE: manejar preflight (esto te faltaba)
+app.options('*', cors());
+
 app.use(express.json());
 
-// PostgreSQL
+// ✅ PostgreSQL
 const pool = new Pool({
-  host: process.env.DB_HOST || 'db',
+  host: process.env.DB_HOST || 'db-service', // ✅ usar nombre del service
   port: process.env.DB_PORT || 5432,
   database: process.env.DB_NAME || 'fintech_db',
   user: process.env.DB_USER || 'fintech_user',
   password: process.env.DB_PASSWORD || 'fintech_pass123'
 });
 
-// 
+// ✅ Inicializar DB
 const initDB = async () => {
   try {
     await pool.query(`
@@ -48,14 +56,12 @@ const initDB = async () => {
   }
 };
 
-// 
-
-// H
+// ✅ Health
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'FinTech Solutions API está funcionando' });
 });
 
-// Usuarios
+// ✅ Obtener usuarios
 app.get('/api/usuarios', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM usuarios ORDER BY id');
@@ -65,7 +71,7 @@ app.get('/api/usuarios', async (req, res) => {
   }
 });
 
-// Usuario
+// ✅ Crear usuario
 app.post('/api/usuarios', async (req, res) => {
   const { nombre, email, saldo } = req.body;
   try {
@@ -75,11 +81,12 @@ app.post('/api/usuarios', async (req, res) => {
     );
     res.status(201).json(result.rows[0]);
   } catch (error) {
+    console.error('❌ Error creando usuario:', error); // ✅ extra log
     res.status(500).json({ error: error.message });
   }
 });
 
-// 
+// ✅ Obtener usuario
 app.get('/api/usuarios/:id', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM usuarios WHERE id = $1', [req.params.id]);
@@ -92,7 +99,7 @@ app.get('/api/usuarios/:id', async (req, res) => {
   }
 });
 
-// 
+// ✅ Transacciones por usuario
 app.get('/api/usuarios/:id/transacciones', async (req, res) => {
   try {
     const result = await pool.query(
@@ -105,7 +112,7 @@ app.get('/api/usuarios/:id/transacciones', async (req, res) => {
   }
 });
 
-// 
+// ✅ Crear transacción
 app.post('/api/transacciones', async (req, res) => {
   const { usuario_id, tipo, monto, descripcion } = req.body;
   const client = await pool.connect();
@@ -113,13 +120,11 @@ app.post('/api/transacciones', async (req, res) => {
   try {
     await client.query('BEGIN');
     
-    // Insertar
     const transaccion = await client.query(
       'INSERT INTO transacciones (usuario_id, tipo, monto, descripcion) VALUES ($1, $2, $3, $4) RETURNING *',
       [usuario_id, tipo, monto, descripcion]
     );
     
-    // Actualizar
     const operacion = tipo === 'ingreso' ? '+' : '-';
     await client.query(
       `UPDATE usuarios SET saldo = saldo ${operacion} $1 WHERE id = $2`,
@@ -130,13 +135,14 @@ app.post('/api/transacciones', async (req, res) => {
     res.status(201).json(transaccion.rows[0]);
   } catch (error) {
     await client.query('ROLLBACK');
+    console.error('❌ Error en transacción:', error);
     res.status(500).json({ error: error.message });
   } finally {
     client.release();
   }
 });
 
-// Iniciar 
+// ✅ Iniciar servidor
 app.listen(PORT, async () => {
   console.log(`🚀 Servidor backend ejecutándose en puerto ${PORT}`);
   await initDB();
