@@ -24,7 +24,7 @@ spec:
               name: http
           env:
             - name: REACT_APP_API_URL
-              value: "http://backend-service:3001/api"
+              value: "http://a6695ae6651b84dd7bd6c25d0906ce17-521328115.us-east-1.elb.amazonaws.com:3001"
           resources:
             requests:
               cpu: "100m"
