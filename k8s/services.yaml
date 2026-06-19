@@ -6,7 +6,7 @@ metadata:
   labels:
     app: fintech-backend
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   selector:
     app: fintech-backend
   ports:
@@ -31,5 +31,3 @@ spec:
       protocol: TCP
       name: http
 ---
-# Servicios de Kubernetes para exponer frontend y backend dentro del cluster.
-# frontend-service usa LoadBalancer para obtener una IP pública en entornos que lo soporten.
