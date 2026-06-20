@@ -44,7 +44,7 @@ spec:
       volumes:
         - name: postgres-data
           persistentVolumeClaim:
-            claimName: fintech-postgres-pvc
+            claimName: fintech-postgres-pvc-efs
 ---
 apiVersion: v1
 kind: Service
