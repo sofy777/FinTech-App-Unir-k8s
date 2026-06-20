@@ -14,5 +14,5 @@ spec:
   csi:
     driver: efs.csi.aws.com
     # Reemplaza el volumeHandle por tu FileSystemId o FileSystemId::AccessPointId
-    volumeHandle: fs-XXXXXXXX
+    volumeHandle: fs-080c1e93f70158b36
     readOnly: false
