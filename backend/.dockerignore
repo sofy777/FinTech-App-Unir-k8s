@@ -1,0 +1,24 @@
+# Evita enviar al contexto de build archivos innecesarios o sensibles desde la carpeta backend.
+
+node_modules
+npm-debug.log*
+.yarn*
+
+# Archivos de configuración/entorno local
+.env
+
+# Control de versiones y metadatos del host
+.git
+.gitignore
+
+# Documentación y archivos de desarrollo no necesarios en la imagen
+README.md
+
+# Archivos temporales y cachés
+*.log
+.DS_Store
+Thumbs.db
+
+# Evitar incluir archivos de Docker si no son necesarios en el build
+.dockerignore
+Dockerfile*

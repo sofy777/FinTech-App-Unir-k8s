@@ -1,0 +1,55 @@
+# Definir servicios: backend, frontend y base de datos
+# Arquitectura de microservicios permite escalabilidad independiente, desarrollo paralelo
+# y despliegue flexible. Cada servicio en su propio contenedor mejora el aislamiento y la seguridad.
+
+services:
+
+  # Servicio de base de datos PostgreSQL
+  # El backend requiere PostgreSQL para persistencia de datos. Usar un contenedor dedicado
+  # facilita la gestión, backups y escalabilidad.
+  db:
+    image: postgres:15-alpine
+    # Variables de entorno para configuración de la base de datos
+    environment:
+      POSTGRES_DB: fintech_db
+      POSTGRES_USER: fintech_user
+      POSTGRES_PASSWORD: fintech_pass123
+    # Volumen para persistencia de datos
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    # Exponer puerto
+    ports:
+      - "5432:5432"
+
+  # Servicio backend (API REST) construido desde el Dockerfile local, permitiendo personalización y control de versiones.
+  backend:
+    build: ./backend
+    # Mapear el puerto 3001 del contenedor al host para acceso externo.
+    ports:
+      - "3001:3001"
+    # El backend necesita la base de datos para inicializar correctamente. 'depends_on' asegura
+    # orden de inicio, aunque no garantiza que la DB esté completamente lista (para eso se usaría healthchecks).
+    depends_on:
+      - db
+    # Variables de entorno para configuración de DB
+    # Los valores coinciden con los defaults en server.js para consistencia.
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: fintech_db
+      DB_USER: fintech_user
+      DB_PASSWORD: fintech_pass123
+
+  # Servicio frontend (aplicación React servida por Nginx) construido desde Dockerfile local para optimización multi-stage.
+  frontend:
+    build: ./frontend
+    # Mapear puerto
+    ports:
+      - "3000:80"
+    # El frontend necesita la API del backend para funcionar completamente. Asegura orden de inicio.
+    depends_on:
+      - backend
+
+# Definir volúmenes nombrados
+volumes:
+  postgres_data:

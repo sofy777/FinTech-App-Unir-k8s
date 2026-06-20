@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fintech-frontend-config
+  namespace: fintech
+data:
+  REACT_APP_API_URL: "/api"

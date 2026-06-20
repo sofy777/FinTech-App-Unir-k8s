@@ -1,0 +1,44 @@
+# Dependencias de Node.js: ya se instalan en el contenedor, no copiar para evitar duplicados y posibles conflictos
+node_modules
+
+# Archivos de log de npm/yarn: no necesarios en la imagen
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Control de versiones: no incluir en la imagen
+.git
+.gitignore
+
+# Documentación: no necesaria en tiempo de ejecución
+README.md
+
+# Variables de entorno: pueden contener secretos, excluir para seguridad
+.env
+
+# Archivos de cobertura y testing: solo para desarrollo
+.nyc_output
+coverage
+.coverage
+
+# Caches de herramientas: no necesarios en producción
+.eslintcache
+.cache
+.parcel-cache
+.next
+.nuxt
+
+# IDEs: archivos específicos del entorno de desarrollo
+.vscode
+.idea
+
+# Archivos del sistema operativo
+*.log
+.DS_Store
+Thumbs.db
+
+# Archivos de Docker: evitar recursión
+.dockerignore
+Dockerfile*
+docker-compose*
+.docker
