@@ -6,7 +6,7 @@ metadata:
   labels:
     app: fintech-frontend
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: fintech-frontend
@@ -28,12 +28,12 @@ spec:
                 configMapKeyRef:
                   name: fintech-frontend-config
                   key: REACT_APP_API_URL
-         # resources:
-         #   requests:
-         #     cpu: "100m"
-         #     memory: "128Mi"
-         #   limits:
-         #     cpu: "300m"
-         #     memory: "256Mi"
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "300m"
+              memory: "256Mi"
 ---
 # Despliegue del frontend. Reemplazar la imagen con la versión de producción construida.
