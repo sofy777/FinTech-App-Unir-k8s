@@ -32,9 +32,13 @@ function App() {
     try {
       const response = await fetch(`${API_URL}/api/usuarios`);
       const data = await response.json();
-      setUsuarios(data);
+      if (!response.ok) {
+        throw new Error(data.error || 'Error al cargar usuarios');
+      }
+      setUsuarios(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error al cargar usuarios:', error);
+      setUsuarios([]);
     }
     setLoading(false);
   };
